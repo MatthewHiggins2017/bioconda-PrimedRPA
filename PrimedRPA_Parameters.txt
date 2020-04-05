@@ -1,0 +1,75 @@
+This parameters file will guide the PrimedRPA-based primer and probe design process. Please follow the instructions outlined below:
+
+----####----
+Important Note - Do not remove any of the “>” and write your input directly after this symbol.
+----####----
+
+
+Please define the reference name for this PrimedRPA run:
+>Installation_Validation_Run
+
+Please indicate if you would like to use a previously generated Alignment File: [NO or File path]
+>NO
+
+Please indicate if you would like to use the previously generated Binding Sites: [NO or File path]
+>NO
+
+Please enter the path, from your current working directory, to the input fasta file:
+>Validation/Validation_1_Input.fasta
+
+Please classify the contents of the input fasta file as one of the following options: [SS, MS, AMS]. Whereby:
+ SS = Single sequence
+ MS = Multiple unaligned sequences
+ MAS = Multiple aligned sequences
+
+>MS
+
+If multiple sequences are present in the input fasta file (Classification of MS or MAS), please indicate below the
+percentage identity required for the primers and probes target binding sites:
+>99
+
+Please indicate if a primer identity anchor is required. [NO or length of anchor]
+>NO
+
+Desired primer length (This can be a range: 28-32 or fixed value: 32):
+>28-32
+
+Please state if you require a probe to be designed and if so what type [NO,EXO,NFO]
+>NO
+
+Desired probe length (This can be a range: 45-50 or fixed value: 50):
+>50
+
+Below please define your max amplicon length.
+>300
+
+Below please state the repeat nucleotide cut-off in bp (e.g. 5bp will exclude sequences containing GGGGG).
+
+>5
+
+Below please insert the minimum percentage GC content for primer/probe:
+>40
+
+Below please insert the maximum percentage GC content for primer/probe:
+>60
+
+Below please indicate the percentage match tolerance for primer-probe dimerisation and secondary structure formation:
+>60
+
+Please enter [No or Path to Background file] below to identify if you want to perform a background DNA binding check:
+>Validation/Validation_1_Background.fasta
+
+Below please insert the percentage background cross reactivity threshold:
+>65
+
+Below please indicate if you would like to implement a Background Hard Fail Filter [NO,YES]:
+>NO
+
+Please define the maximum number of sets you would like to identify:
+>5
+
+Please define the number of threads available:
+>1
+
+Blastn Cross Reactivity Search Settings [Basic or Advanced or Fast]
+>Fast
