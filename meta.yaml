@@ -30,10 +30,10 @@ test:
   imports:
     - primedrpa
   commands:
-    - PrimedRPA.py --help
+    - PrimedRPA --help
 
 about:
   home: https://github.com/MatthewHiggins2017/bioconda-PrimedRPA/
   license: GPL3
   license_file: LICENSE
-  summary: RPA Primer Design
+  summary: RPA primer & probe design tool.
