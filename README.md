@@ -1,6 +1,6 @@
 # PrimedRPA
 
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/primedrpa/README.html) [![Anaconda-Server Badge](https://anaconda.org/bioconda/primedrpa/badges/license.svg)](https://anaconda.org/bioconda/primedrpa) [![Anaconda-Server Badge](https://anaconda.org/bioconda/primedrap/badges/latest_release_date.svg)](https://anaconda.org/bioconda/primedrpa)
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](https://anaconda.org/bioconda/primedrpa) [![Anaconda-Server Badge](https://anaconda.org/bioconda/primedrpa/badges/license.svg)](https://anaconda.org/bioconda/primedrpa)
 
 A python-based command-line package to augment primer and probe design for Recombinase Polymerase Amplification (RPA).
 
