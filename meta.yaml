@@ -1,6 +1,6 @@
 {% set name = "primedrpa" %}
 {% set version = "1.0.0" %}
-{% set sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" %}
+{% set sha256 = "e8a1e3841f2e3e2fd183959af67c8c604009e956489cca6cb39715c6955794b4" %}
 
 package:
   name: {{name}}
