@@ -6,5 +6,4 @@ setuptools.setup(
 	packages=["primedrpa",],
 	license="GPL3",
 	long_description="RPA Primer & Probe Design Tool",
-	scripts= ['PrimedRPA'],
-)
+	scripts= ['PrimedRPA'])
