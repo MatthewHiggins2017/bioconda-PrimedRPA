@@ -5,9 +5,11 @@
 A python-based command-line package to augment primer and probe design for Recombinase Polymerase Amplification (RPA).
 
 
-### Prerequisites
+### Installation
 
-Python 3.5 +
+```
+conda install -c bioconda primedrpa
+```
 
 
 
