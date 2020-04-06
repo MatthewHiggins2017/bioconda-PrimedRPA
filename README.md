@@ -12,7 +12,14 @@ A python-based command-line package to augment primer and probe design for Recom
 conda install -c bioconda primedrpa
 ```
 
+### Parameter Parsing
 
+Parameters can be parse to PrimedRPA via the command line or using the PrimedRPA_Parameters.txt file. To download the text file
+please see the link below:
+
+```
+wget https://raw.githubusercontent.com/MatthewHiggins2017/bioconda-PrimedRPA/master/PrimedRPA_Parameters.txt
+```
 
 ### Key Output Files
 
@@ -33,7 +40,7 @@ Please see the wiki for more information, including a step-by-step walk through 
 PrimerRPA incorporates the following 3rd party software:
 
 Clustal Omega (http://www.clustal.org/omega/) - For sequence alignment if necessary.<br/>
-Blastn (https://blast.ncbi.nlm.nih.gov/Blast.cgi)- To assess primer/probe cross-reactivity.<br/>
+Blastn (https://blast.ncbi.nlm.nih.gov/Blast.cgi) - To assess primer/probe cross-reactivity.<br/>
 Samtools (http://www.htslib.org/) - To assess primer/probe cross-reactivity.<br/>
 
 
