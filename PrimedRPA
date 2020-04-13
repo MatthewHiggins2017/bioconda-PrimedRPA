@@ -741,7 +741,7 @@ def CheckingAlignedOutputFile(AllParameter):
 
 
 		# If Background Check is Present filter
-		if AllParameter.BackgroundCheck == 'YES':
+		if AllParameter.BackgroundCheck != 'NO':
 			PassedOligos = PassedOligos[PassedOligos['Max Background Cross Reactivity Score']<=AllParameter.CrossReactivityThresh]
 
 
