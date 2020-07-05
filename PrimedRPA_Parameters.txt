@@ -73,3 +73,6 @@ Please define the number of threads available:
 
 Blastn Cross Reactivity Search Settings [Basic or Advanced or Fast]
 >Fast
+
+Blastn Evalue
+>1000

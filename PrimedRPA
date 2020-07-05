@@ -103,9 +103,11 @@ def BlastnBackgroundCheck(seq,AllParameter):
 	MaxScoreBackSeq = ''
 	HardFailBoolean = False
 
+	RIS = str(random.randint(0,1000000))
+
 
 	#Create temp fasta file
-	tempfastainput = open('./{}/{}_Blastn_Input.fa'.format(AllParameter.PrimerBlastnOutput,seq),'w')
+	tempfastainput = open('./{}/{}_{}_Blastn_Input.fa'.format(AllParameter.PrimerBlastnOutput,seq,RIS),'w')
 	tempfastainput.write('>Temp_Blastn_Fasta\n{}\n'.format(seq))
 	tempfastainput.close()
 
@@ -123,22 +125,28 @@ def BlastnBackgroundCheck(seq,AllParameter):
 
 
 	#Triggure Blastn command
-	blastncommandrun = '{0} -word_size {5} -gapopen 5 -gapextend 2 -reward 1 -penalty {4}  -query  {3}/{1}_Blastn_Input.fa -db {2}/{2} -out {3}/{1}_Blastn_Output.csv -outfmt "10 sseqid pident qstart qend sstart send evalue gaps sstrand" '.format(AllParameter.BlastnPath,
-																																											 				   														seq,
-																																																												 	AllParameter.BlastnDBName,
-																																											 			  	   							 							AllParameter.PrimerBlastnOutput,
-																																																													Penalty,
-																																																													WordSize)
+	blastncommandrun = '{0} -word_size {5} -gapopen 5 -gapextend 2 -reward 1 -penalty {4} -evalue {7}  -query  {3}/{1}_{6}_Blastn_Input.fa -db {2}/{2} -out {3}/{1}_{6}_Blastn_Output.csv -outfmt "10 sseqid pident qstart qend sstart send evalue gaps sstrand" '.format(AllParameter.BlastnPath,
+																																													 				   														seq,
+																																																														 	AllParameter.BlastnDBName,
+																																													 			  	   							 							AllParameter.PrimerBlastnOutput,
+																																																															Penalty,
+																																																															WordSize,
+																																																															RIS,
+																																																															AllParameter.Evalue)
+
 
 
 	subprocess.call([blastncommandrun],shell=True)
+
+	# Remove Blastn Input File
+	os.remove('./{}/{}_{}_Blastn_Input.fa'.format(AllParameter.PrimerBlastnOutput,seq,RIS))
 
 	# Try to read dataframe (may be empty if no alignments found)
 	try:
 
 		ShorterBackground = False
 
-		blastnoutdf = pd.read_csv('{}/{}_Blastn_Output.csv'.format(AllParameter.PrimerBlastnOutput,seq),header=None)
+		blastnoutdf = pd.read_csv('{}/{}_{}_Blastn_Output.csv'.format(AllParameter.PrimerBlastnOutput,seq,RIS),header=None)
 		blastnoutdf.columns=['Background_SeqID','Percentage Identity','qStart','qEnd','BackSeq_Start','BackSeq_End','Evalue','Number Of Gaps','Strand']
 		blastnoutdf['Cross Reactivity Score'] = ((((blastnoutdf['qEnd']+1) - blastnoutdf['qStart'])*(blastnoutdf['Percentage Identity']/100))/len(seq))*100
 		blastnoutdf = blastnoutdf.sort_values(by=['Cross Reactivity Score'],ascending=False)
@@ -162,13 +170,14 @@ def BlastnBackgroundCheck(seq,AllParameter):
 					LowerExtension = 0
 					ShorterBackground = True
 
-				SamToolsCommand = '{} faidx {} {}:{}-{} -o Adv_{}_{}.fa'.format(AllParameter.SamtoolsPath,
+				SamToolsCommand = '{} faidx {} {}:{}-{} -o Adv_{}_{}_{}.fa'.format(AllParameter.SamtoolsPath,
 															   AllParameter.BackgroundCheck,
 															   CleanRefID,
 															   LowerExtension,
 															   UpperExtension,
 															   seq,
-															   CleanRefID)
+															   CleanRefID,
+															   RIS)
 
 			# If Background Seq Is (-) Sense
 			else:
@@ -180,19 +189,20 @@ def BlastnBackgroundCheck(seq,AllParameter):
 					LowerExtension = 0
 					ShorterBackground = True
 
-				SamToolsCommand = '{} faidx -i {} {}:{}-{} -o Adv_{}_{}.fa'.format(AllParameter.SamtoolsPath,
+				SamToolsCommand = '{} faidx -i {} {}:{}-{} -o Adv_{}_{}_{}.fa'.format(AllParameter.SamtoolsPath,
 																			   AllParameter.BackgroundCheck,
 																			   CleanRefID,
 																			   LowerExtension,
 																			   UpperExtension,
 																			   seq,
-																			   CleanRefID)
+																			   CleanRefID,
+																			   RIS)
 
 			# Run Samtools Command
 			subprocess.call([SamToolsCommand],shell=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 
 			# Obtain Sequence
-			fastadict = FastaToDict('Adv_{}_{}.fa'.format(seq,CleanRefID))
+			fastadict = FastaToDict('Adv_{}_{}_{}.fa'.format(seq,CleanRefID,RIS))
 
 			# Extract Sequence & Complement
 			ExtraSeq = list(fastadict.values())[0]
@@ -210,7 +220,7 @@ def BlastnBackgroundCheck(seq,AllParameter):
 
 
 			# Remove Advance Samtools Generated String
-			os.remove('Adv_{}_{}.fa'.format(seq,CleanRefID))
+			os.remove('Adv_{}_{}_{}.fa'.format(seq,CleanRefID,RIS))
 
 
 		blastnoutdf = blastnoutdf.sort_values(by=['Advanced Cross Reactivity Percentage'],ascending=False)
@@ -395,8 +405,6 @@ def SSIdentification(SeqOne, SeqTwo, ReverseOrientation, FixedBack=False ,thresh
 
 
 
-
-
 # Creating Alignment DF Multithread Function
 def CreatingInputHomologyDF(fastadict,FastaIndexList):
 	AlignedDF = pd.DataFrame()
@@ -540,15 +548,11 @@ def IndentifyingAndFilteringOligos(AllParameter,
 												# Run Blastn Check And If Passess Write Out Set
 												MaxBackgroundScoreBindingScore, MaxScoreBackSeq, HardFailBool  = BlastnBackgroundCheck(NucleotideSeq, AllParameter)
 
-												# Remove Temp Input File
-												os.remove('{}/{}_Blastn_Input.fa'.format(AllParameter.PrimerBlastnOutput, NucleotideSeq))
 
 												# Check to see if Max Binding Score Less Than Threshold
 												if MaxBackgroundScoreBindingScore > AllParameter.CrossReactivityThresh:
 													BlastnPass = False
 
-													# Remove Background If Neccessary
-													os.remove('{}/{}_Blastn_Output.csv'.format(AllParameter.PrimerBlastnOutput, NucleotideSeq))
 
 												else:
 													RowDict['Max Background Cross Reactivity Score'] = MaxBackgroundScoreBindingScore
@@ -818,7 +822,6 @@ def CheckingAlignedOutputFile(AllParameter):
 
 
 
-
 	# Identify Primer-Probe Sets
 	print('Identifying Valid Primer-Probe Combinations')
 	FinalOutputDF = pd.DataFrame()
@@ -941,6 +944,7 @@ try:
 				MaxSets = int(u[18])
 				Threads = int(u[19])
 				BackgroundSearchSensitivity = str(u[20])
+				Evalue=int(u[21])
 
 
 		except:
@@ -971,11 +975,13 @@ try:
 		parser.add_argument('--MaxSets', help='Default Set To 100',type=int,default=100)
 		parser.add_argument('--Threads', help='Default Set To 1',type=int,default=1)
 		parser.add_argument('--BackgroundSearchSensitivity', help='Options [Basic or Advanced or Fast]',type=str,default='Basic')
+		parser.add_argument('--Evalue', help='Default Set To 1000',type=int,default=1000)
+
 		AllParameter = parser.parse_args()
 
 
 except:
-	print('PLease run PrimedRPA --help to see valid options')
+	print('Please run PrimedRPA --help to see valid options')
 	sys.exit()
 
 
