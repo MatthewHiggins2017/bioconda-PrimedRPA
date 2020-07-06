@@ -225,7 +225,10 @@ def BlastnBackgroundCheck(seq,AllParameter):
 			# Remove Advance Samtools Generated String
 			os.remove('Adv_{}_{}_{}.fa'.format(seq,CleanRefID,RIS))
 
+		# Remove Raw Blastn Output
+		os.remove('{}/{}_{}_Blastn_Output.csv'.format(AllParameter.PrimerBlastnOutput,seq,RIS))
 
+		# Save Clean Blast Output
 		blastnoutdf = blastnoutdf.sort_values(by=['Advanced Cross Reactivity Percentage'],ascending=False)
 		blastnoutdf.to_csv('{}/{}_Blastn_Output.csv'.format(AllParameter.PrimerBlastnOutput,seq),index=None)
 		IndexOfInterest = blastnoutdf.index.tolist()[0]
