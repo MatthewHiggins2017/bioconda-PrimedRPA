@@ -208,15 +208,18 @@ def BlastnBackgroundCheck(seq,AllParameter):
 			ExtraSeq = list(fastadict.values())[0]
 			ComplementSeq = getComplement(ExtraSeq)
 
+			# Bug Fix 2020-07-06 - I.e. Only run if global alignment is complete
+			if len(ComplementSeq) == len(seq):
 
-			# Run SS Check Function
-			BackgroundMaxBindingPercentage, BackgroundMaxBindingString, BackgroundHardFail, BackgroundString = SSIdentification(seq, ComplementSeq, False, ShorterBackground)
 
-			# Add to Blastn DataFrame
-			blastnoutdf.loc[blastoutindex,'Advanced Cross Reactivity Percentage'] = BackgroundMaxBindingPercentage
-			blastnoutdf.loc[blastoutindex,'Advanced Cross Reactivity Percentage String'] = BackgroundMaxBindingString
-			blastnoutdf.loc[blastoutindex,'Cross Reactivity Hard Fail'] = BackgroundHardFail
-			blastnoutdf.loc[blastoutindex,'Cross Reactivity Hard Fail String'] = BackgroundString
+				# Run SS Check Function
+				BackgroundMaxBindingPercentage, BackgroundMaxBindingString, BackgroundHardFail, BackgroundString = SSIdentification(seq, ComplementSeq, False, ShorterBackground)
+
+				# Add to Blastn DataFrame
+				blastnoutdf.loc[blastoutindex,'Advanced Cross Reactivity Percentage'] = BackgroundMaxBindingPercentage
+				blastnoutdf.loc[blastoutindex,'Advanced Cross Reactivity Percentage String'] = BackgroundMaxBindingString
+				blastnoutdf.loc[blastoutindex,'Cross Reactivity Hard Fail'] = BackgroundHardFail
+				blastnoutdf.loc[blastoutindex,'Cross Reactivity Hard Fail String'] = BackgroundString
 
 
 			# Remove Advance Samtools Generated String
