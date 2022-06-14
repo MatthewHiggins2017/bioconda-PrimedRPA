@@ -1,10 +1,21 @@
 #!/bin/bash
 
+# Clone git repos
+echo 'Cloning repos...'
+
+# My conda repo
+git clone -q https://github.com/joostvhts/PrimedRPA > /dev/null
+mv PrimedRPA/* .
+
+# Matthew Higgins' PrimeRPA repo
+git clone -q https://github.com/MatthewHiggins2017/bioconda-PrimedRPA > /dev/null
+echo 'Successfully cloned both repos.'
+mv bioconda-PrimedRPA/* .
+
 # Web location of the (mini)conda installer to use
 CONDA_INSTALLER=https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh
 
 echo 'Installing conda...'
-
 # Wipe the current value of PYTHONPATH to prepare for conda installation
 PYTHONPATH=''
 
@@ -26,11 +37,6 @@ echo 'Successfully updated conda.'
 echo 'Installing PrimedRPA...'
 conda install -c bioconda primedrpa --yes > /dev/null
 echo 'Successfully installed PrimedRPA.'
-
-# Clone PrimeRPA repo
-echo 'Cloning PrimedRPA repo...'
-git clone -q https://github.com/MatthewHiggins2017/bioconda-PrimedRPA > /dev/null
-echo 'Successfully cloned PrimedPA repo.'
 
 # Verification of successful installation
 # Make check variable
