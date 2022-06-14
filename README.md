@@ -2,7 +2,7 @@
 
 PrimedRPA is a python script by Matthew Higgins that creates candidate recombinase polymerase A amplification (RPA) primers based on sequences provided in a text file.
 
-This repository hosts files used in a Google Colab notebook I created to get around the process of installing conda and PrimedRPA locally.
+This repository hosts files used in a Google Colab notebook I created to get around the process of installing conda and PrimedRPA locally. The most recent original repo of PrimedRPA is [here](https://github.com/MatthewHiggins2017/bioconda-PrimedRPA)
 
 ### Installation
 
