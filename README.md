@@ -1,51 +1,23 @@
 # PrimedRPA
 
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](https://anaconda.org/bioconda/primedrpa) [![Anaconda-Server Badge](https://anaconda.org/bioconda/primedrpa/badges/license.svg)](https://anaconda.org/bioconda/primedrpa) [![Anaconda-Server Badge](
-https://anaconda.org/bioconda/primedrpa/badges/latest_release_date.svg)](https://anaconda.org/bioconda/primedrpa)
+PrimedRPA is a python script by Matthew Higgins that creates candidate recombinase polymerase A amplification (RPA) primers based on sequences provided in a text file.
 
-A python-based command-line package to augment primer and probe design for Recombinase Polymerase Amplification (RPA).
-
+This repository hosts files used in a Google Colab notebook I created to get around the process of installing conda and PrimedRPA locally.
 
 ### Installation
 
-```
-conda install -c bioconda primedrpa
-```
-
-### Parameter Parsing
-
-Parameters can be parsed to PrimedRPA via the command line or using the PrimedRPA_Parameters.txt file. To download the text file
-please see the link below:
-
-```
-wget https://raw.githubusercontent.com/MatthewHiggins2017/bioconda-PrimedRPA/master/PrimedRPA_Parameters.txt
-```
-
-### Key Output Files
-
-For each PrimedRPA run the following 3 key files are generated:
-
-```
-[RunID]_Alignment_Summary.csv
-[RunID]_Oligo_Binding_Sites.csv
-[RunID]_Output_Sets.csv
-```
-
-### Walk-Through
-
-Please see the wiki for more information, including a step-by-step walk through of using the software.
+For this Colab derivative, no installation is required. The interactive notebook and its guide can be found [here](https://colab.research.google.com/drive/1e46vSyKUgoW9UgAfYQLYwJLomt8Trigu?usp=sharing)
 
 ### 3rd-Party Software
 
-PrimerRPA incorporates the following 3rd party software:
+PrimedRPA incorporates the following 3rd party software:
 
-Clustal Omega (http://www.clustal.org/omega/) - For sequence alignment if necessary.<br/>
-Blastn (https://blast.ncbi.nlm.nih.gov/Blast.cgi) - To assess primer/probe cross-reactivity.<br/>
-Samtools (http://www.htslib.org/) - To assess primer/probe cross-reactivity.<br/>
+- Clustal Omega (http://www.clustal.org/omega/) - For sequence alignment if necessary.<br/>
+- Blastn (https://blast.ncbi.nlm.nih.gov/Blast.cgi) - To assess primer/probe cross-reactivity.<br/>
+- Samtools (http://www.htslib.org/) - To assess primer/probe cross-reactivity.<br/>
 
-
+This derivative by me, not the creator of PrimedRPA, additionally uses Google Colab (https://colab.research.google.com) to run PrimedRPA in the cloud instead of locally, circumventing any problems with installation.
 
 ### Contact
 
-
-If you encounter any bugs please contact me directly at **matthew.higgins[at]lshtm.ac.uk**
+If you encounter any bugs please contact the creator of PrimedRPA directly at **matthew.higgins[at]lshtm.ac.uk**. For colab-specific questions open an [Issue](https://github.com/joostvhts/PrimedRPA/issues/new/choose) in this repo.
