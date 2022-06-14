@@ -6,7 +6,7 @@ Important Note - Do not remove any of the “>” and write your input directly 
 
 
 Please define the reference name for this PrimedRPA run:
->Installation_Validation_Run
+>SARS-CoV-2-RdRp
 
 Please indicate if you would like to use a previously generated Alignment File: [```NO``` or File path]
 >NO
@@ -15,51 +15,46 @@ Please indicate if you would like to use the previously generated Binding Sites:
 >NO
 
 Please enter the path, from your current working directory, to the input fasta file:
->input/targetFileNameHere.fasta
+>input/SARS-CoV-2-RdRp.fasta
 
-Please classify the contents of the input fasta file as one of the following options: [```SS```, ```MS```, ```AMS```]. Whereby:
- SS = Single sequence
- MS = Multiple unaligned sequences
- MAS = Multiple aligned sequences
-
+Please classify the contents of the input fasta file as one of the following options: for a single sequence enter ```SS```, for multiple sequences enter ```MS``` and for multiple aligned sequences enter ```AMS```:
 >SS
 
 If multiple sequences are present in the input fasta file (Classification of MS or MAS), please indicate below the
-percentage identity required for the primers and probes target binding sites:
+percentage identity required for the primers and probes target binding sites (just the number):
 >99
 
-Please indicate if a primer identity anchor is required. [NO or length of anchor]
+Please indicate if a primer identity anchor is required [```NO``` or length of anchor]:
 >NO
 
 Desired primer length (This can be a range: 28-32 or fixed value: 32):
 >28-32
 
-Please state if you require a probe to be designed and if so what type [NO,EXO,NFO]
+Please state if you require a probe to be designed and if so what type [```NO```, ```EXO```, ```NFO```]
 >NO
 
 Desired probe length (This can be a range (```45-50```) or fixed value ```50```):
 >50
 
 Below please define your max amplicon length.
->300
+>2000
 
-Below please state the repeat nucleotide cut-off in bp (e.g. 5bp will exclude sequences containing GGGGG).
-
+Below please state the repeat nucleotide cut-off in bp (e.g. 5 will exclude sequences containing GGGGG).
 >5
 
-Below please insert the minimum percentage GC content for primer/probe:
->40
+Below please insert the minimum percentage GC content for primer/probe (just the number):
+>0
 
-Below please insert the maximum percentage GC content for primer/probe:
->60
+Below please insert the maximum percentage GC content for primer/probe (just the number):
+>100
 
-Below please indicate the percentage match tolerance for primer-probe dimerisation and secondary structure formation:
->60
+Below please indicate the percentage match tolerance for primer-probe dimerisation and secondary structure formation (just the number):
+>100
 
-Please enter [NO or Path to Background file] below to identify if you want to perform a background DNA binding check:
->input/background.fasta
+Please enter [```NO``` or ```Path to background.fasta file```] below to identify if you want to perform a background DNA binding check:
+>NO
 
-Below please insert the percentage background cross reactivity threshold:
+Below please insert the percentage background cross reactivity threshold (just the number):
 >65
 
 Below please indicate if you would like to implement a Background Hard Fail Filter [```NO```, ```YES```]:
@@ -69,10 +64,10 @@ Please define the maximum number of sets you would like to identify:
 >5
 
 Please define the number of threads available:
->1
+>2
 
 Blastn Cross Reactivity Search Settings [Basic or Advanced or Fast]
->Fast
+>Basic
 
 Blastn Evalue
 >1000
