@@ -20,6 +20,9 @@ python setup.py install
 ```
 
 
+Updated conda release coming soon.
+
+
 ### Parameter Parsing
 
 Parameters can be parsed to PrimedRPA via the command line or using the PrimedRPA_Parameters.txt file. To download the text file
