@@ -19,8 +19,11 @@ conda activate RPA
 python setup.py install
 ```
 
+Conda Installation
 
-Updated conda release coming soon.
+```
+conda install -c bioconda primedrpa
+```
 
 
 ### Parameter Parsing
