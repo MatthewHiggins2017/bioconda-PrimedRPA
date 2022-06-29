@@ -8,7 +8,26 @@ A python-based command-line package to augment primer and probe design for Recom
 
 ### Installation
 
+
+GitHub Installation
+
 ```
+git clone https://github.com/MatthewHiggins2017/bioconda-PrimedRPA.git
+cd ./bioconda-PrimedRPA
+conda env create --file=PrimedRPA.yml
+conda activate PrimedRPA
+python setup.py install
+```
+
+
+
+
+
+
+
+```
+Fix Required
+
 conda install -c bioconda primedrpa
 ```
 

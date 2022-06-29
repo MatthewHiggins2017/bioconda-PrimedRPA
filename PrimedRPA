@@ -801,9 +801,9 @@ def CheckingAlignedOutputFile(AllParameter):
 			HomoDFInputIndexBlocks = [HDFLST[i:i + AllParameter.Threads] for i in range(0, len(HDFLST), AllParameter.Threads)]
 			MTDFOVI = list(zip([fastadict]*len(HomoDFInputIndexBlocks),HomoDFInputIndexBlocks))
 
-			if __name__ == '__main__':
-				with Pool(processes=AllParameter.Threads) as pool:
-					AlignedDFMultiThreadOupt = pool.starmap(CreatingInputHomologyDF,MTDFOVI)
+
+			with Pool(processes=AllParameter.Threads) as pool:
+				AlignedDFMultiThreadOupt = pool.starmap(CreatingInputHomologyDF,MTDFOVI)
 			MergedAlignedDF = pd.concat(AlignedDFMultiThreadOupt).reset_index().drop(['index'],axis=1)
 			MergedAlignedDF = MergedAlignedDF.sort_values(by=['Index_Pos'])
 			MergedAlignedDF.to_csv('{}_Alignment_Summary.csv'.format(AllParameter.RunID),index=None)
@@ -815,9 +815,8 @@ def CheckingAlignedOutputFile(AllParameter):
 												 [MergedAlignedDF]*len(HomoDFInputIndexBlocks),
 												 HomoDFInputIndexBlocks))
 
-		if __name__ == '__main__':
-			with Pool(processes=AllParameter.Threads) as pool:
-				PotentialPrimerProbeOut = pool.starmap(IndentifyingAndFilteringOligos,PrimerProbeCheckParallelInput)
+		with Pool(processes=AllParameter.Threads) as pool:
+			PotentialPrimerProbeOut = pool.starmap(IndentifyingAndFilteringOligos,PrimerProbeCheckParallelInput)
 
 
 		PassedOligos =  pd.concat(PotentialPrimerProbeOut).reset_index().drop(['index'],axis=1)
@@ -884,9 +883,9 @@ def CheckingAlignedOutputFile(AllParameter):
 												  [PPL]*len(PSST)))
 
 
-						if __name__ == '__main__':
-							with Pool(processes=AllParameter.Threads) as pool:
-								SuccessfulSets = pool.starmap(ComboIdentifyier,ComboSearchInput)
+
+						with Pool(processes=AllParameter.Threads) as pool:
+							SuccessfulSets = pool.starmap(ComboIdentifyier,ComboSearchInput)
 
 						TempOutputDF = pd.concat(SuccessfulSets)
 						FinalOutputDF = pd.concat([FinalOutputDF,TempOutputDF])
@@ -1043,4 +1042,5 @@ if (AllParameter.InputFileType == 'MS' and AllParameter.InputFile != 'NO') :
 
 
 # Run Primer, Probe Design process
-CheckingAlignedOutputFile(AllParameter)
+if __name__ == '__main__':
+	CheckingAlignedOutputFile(AllParameter)
