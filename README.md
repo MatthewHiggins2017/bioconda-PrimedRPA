@@ -35,6 +35,16 @@ conda activate RPA
 python3 -m pip install mpi4py
 ```
 
+Now `PrimedRPA` can be called like
+
+```sh
+conda activate RPA
+
+mpiexec <other mpi options> -n "${available_threads}" python -m mpi4py.futures "$(which PrimedRPA)" \
+    <...> \
+    --Threads "${available_threads}"
+```
+
 ### Parameter Parsing
 
 Parameters can be parsed to PrimedRPA via the command line or using the PrimedRPA_Parameters.txt file. To download the text file
