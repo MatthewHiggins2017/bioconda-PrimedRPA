@@ -23,6 +23,18 @@ Conda Installation
 conda install -c bioconda primedrpa
 ```
 
+For multimachine parallelization `mpi4py` is used and thus need to be installed.
+
+```sh
+conda activate RPA
+# ## if you want to use an existing MPI implementation, set the variable MPICC
+# ##  making e.g. openMPI available by activating the respective module.
+# ##  if the variable is not set, an MPI installation should be installed automatically
+# ##  as a dependency.
+# export MPICC=$(which mpicc)
+python3 -m pip install mpi4py
+```
+
 ### Parameter Parsing
 
 Parameters can be parsed to PrimedRPA via the command line or using the PrimedRPA_Parameters.txt file. To download the text file
