@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 #####################################################################
 #  PrimedRPA: RPA Primer and Probe Set Finder                       #
@@ -22,7 +22,7 @@ import itertools
 import random
 import pandas as pd
 from collections import Counter
-from multiprocessing import Pool
+from mpi4py.futures import MPIPoolExecutor as Pool
 import argparse
 import re
 
@@ -802,7 +802,7 @@ def CheckingAlignedOutputFile(AllParameter):
 			MTDFOVI = list(zip([fastadict]*len(HomoDFInputIndexBlocks),HomoDFInputIndexBlocks))
 
 
-			with Pool(processes=AllParameter.Threads) as pool:
+			with Pool(max_workers=AllParameter.Threads) as pool:
 				AlignedDFMultiThreadOupt = pool.starmap(CreatingInputHomologyDF,MTDFOVI)
 			MergedAlignedDF = pd.concat(AlignedDFMultiThreadOupt).reset_index().drop(['index'],axis=1)
 			MergedAlignedDF = MergedAlignedDF.sort_values(by=['Index_Pos'])
@@ -815,7 +815,7 @@ def CheckingAlignedOutputFile(AllParameter):
 												 [MergedAlignedDF]*len(HomoDFInputIndexBlocks),
 												 HomoDFInputIndexBlocks))
 
-		with Pool(processes=AllParameter.Threads) as pool:
+		with Pool(max_workers=AllParameter.Threads) as pool:
 			PotentialPrimerProbeOut = pool.starmap(IndentifyingAndFilteringOligos,PrimerProbeCheckParallelInput)
 
 
@@ -884,7 +884,7 @@ def CheckingAlignedOutputFile(AllParameter):
 
 
 
-						with Pool(processes=AllParameter.Threads) as pool:
+						with Pool(max_workers=AllParameter.Threads) as pool:
 							SuccessfulSets = pool.starmap(ComboIdentifyier,ComboSearchInput)
 
 						TempOutputDF = pd.concat(SuccessfulSets)
@@ -901,146 +901,148 @@ def CheckingAlignedOutputFile(AllParameter):
 ########################################################################################################################
 ########################################################################################################################
 
-
-print('\n\n')
-print('-------------------------------------------')
-print('----------------PrimedRPA------------------')
-print('-----Finding RPA Primer and Probe Sets-----')
-print('-------------Higgins M et al.--------------')
-print('-------------------------------------------\n\n')
-
-
-
-try:
-	# Utilise Either Parameters File Or Command Line Interface
-	if 'PrimedRPA_Parameters.txt' in sys.argv[1]:
-
-		# Import and Extract Parameters
-		parametersFile = sys.argv[1]
-		try:
-			paraFile = open(parametersFile,"r")
-			iu = []
-			for line in paraFile.readlines():
-				if ">" in line:
-					n = line.strip('\n')
-					h = n.strip('>')
-					iu.append(h)
-			u = iu[1:]
-
-			class AllParameter:
-				RunID = str(u[0])
-				PriorAlign = str(u[1])
-				PriorBindingSite = str(u[2])
-				InputFile = str(u[3])
-				InputFileType = str(u[4])
-				IdentityThreshold = int(u[5])/100
-				ConservedAnchor = str(u[6]).strip()
-				PrimerLength = u[7].strip()
-				ProbeRequired = str(u[8]).upper()
-				ProbeLength = u[9].strip()
-				AmpliconSizeLimit = int(u[10])
-				NucleotideRepeatLimit = int(u[11])
-				MinGC = int(u[12])
-				MaxGC = int(u[13])
-				DimerisationThresh = int(u[14])
-				BackgroundCheck = str(u[15])
-				CrossReactivityThresh = int(u[16])
-				HardCrossReactFilter = str(u[17])
-				MaxSets = int(u[18])
-				Threads = int(u[19])
-				BackgroundSearchSensitivity = str(u[20])
-				Evalue=int(u[21])
-
-
-		except:
-			print('Parameters File Could Not Be Opened\nCheck File Path.')
-			sys.exit()
-
-	else:
-
-		parser = argparse.ArgumentParser()
-		parser.add_argument('--RunID', help='Desired Run ID', required=True)
-		parser.add_argument('--PriorAlign', help='Optional: Path to Prior Binding File',default='NO')
-		parser.add_argument('--PriorBindingSite', help='Optional: Path to Prior Binding File',default='NO')
-		parser.add_argument('--InputFile', help='Path to Input File',default='NO')
-		parser.add_argument('--InputFileType', help='Options [SS,MS,MAS]')
-		parser.add_argument('--IdentityThreshold', help='Desired Identity Threshold',default=0.99)
-		parser.add_argument('--ConservedAnchor', help='Identity Anchor Required',type=str,default='NO')
-		parser.add_argument('--PrimerLength', help='Desired Primer Length',type=str,default='30')
-		parser.add_argument('--ProbeRequired', help='Options [NO,EXO,NFO]',type=str,default='NO')
-		parser.add_argument('--ProbeLength', help='Desired Probe Length',type=str,default='50')
-		parser.add_argument('--AmpliconSizeLimit', help='Amplicon Size Limit',type=int,default=500)
-		parser.add_argument('--NucleotideRepeatLimit', help='Nucleotide Repeat Limit (i.e 5 = AAAAA)',type=int,default=5)
-		parser.add_argument('--MinGC', help='Minimum GC Content',type=int,default=30)
-		parser.add_argument('--MaxGC', help='Maximum GC Content',type=int,default=70)
-		parser.add_argument('--DimerisationThresh', help='Percentage Dimerisation Tolerated',type=int,default=40)
-		parser.add_argument('--BackgroundCheck', help='Options [NO, Path To Background Fasta File]',default='NO')
-		parser.add_argument('--CrossReactivityThresh', help='Max Cross Reactivity Threshold',type=int,default=60)
-		parser.add_argument('--HardCrossReactFilter', help='Hard Cross Reactivity Filter',type=str,default='NO')
-		parser.add_argument('--MaxSets', help='Default Set To 100',type=int,default=100)
-		parser.add_argument('--Threads', help='Default Set To 1',type=int,default=1)
-		parser.add_argument('--BackgroundSearchSensitivity', help='Options [Basic or Advanced or Fast]',type=str,default='Basic')
-		parser.add_argument('--Evalue', help='Default Set To 1000',type=int,default=1000)
-
-		AllParameter = parser.parse_args()
-
-
-except:
-	print('Please run PrimedRPA --help to see valid options')
-	sys.exit()
-
-
-# Check Files Defined Exist
-FileLocationsCheckList = [AllParameter.PriorAlign,
-						  AllParameter.PriorBindingSite,
-						  AllParameter.BackgroundCheck,
-						  AllParameter.InputFile]
-
-for FL in FileLocationsCheckList:
-	if (FL != 'NO' and FL != ''):
-		if FL not in glob.glob(FL):
-			print('File Not Found: {}'.format(FL))
-			sys.exit()
+def main():
+	print('\n\n')
+	print('-------------------------------------------')
+	print('----------------PrimedRPA------------------')
+	print('-----Finding RPA Primer and Probe Sets-----')
+	print('-------------Higgins M et al.--------------')
+	print('-------------------------------------------\n\n')
 
 
 
-#Define tool dependancy paths
-AllParameter.BlastnPath = 'blastn'
-AllParameter.BlastnDBCreationPath = 'makeblastdb'
-AllParameter.ClustalOPath = 'clustalo'
-AllParameter.SamtoolsPath = 'samtools'
+	try:
+		# Utilise Either Parameters File Or Command Line Interface
+		if 'PrimedRPA_Parameters.txt' in sys.argv[1]:
+
+			# Import and Extract Parameters
+			parametersFile = sys.argv[1]
+			try:
+				paraFile = open(parametersFile,"r")
+				iu = []
+				for line in paraFile.readlines():
+					if ">" in line:
+						n = line.strip('\n')
+						h = n.strip('>')
+						iu.append(h)
+				u = iu[1:]
+
+				class AllParameter:
+					RunID = str(u[0])
+					PriorAlign = str(u[1])
+					PriorBindingSite = str(u[2])
+					InputFile = str(u[3])
+					InputFileType = str(u[4])
+					IdentityThreshold = int(u[5])/100
+					ConservedAnchor = str(u[6]).strip()
+					PrimerLength = u[7].strip()
+					ProbeRequired = str(u[8]).upper()
+					ProbeLength = u[9].strip()
+					AmpliconSizeLimit = int(u[10])
+					NucleotideRepeatLimit = int(u[11])
+					MinGC = int(u[12])
+					MaxGC = int(u[13])
+					DimerisationThresh = int(u[14])
+					BackgroundCheck = str(u[15])
+					CrossReactivityThresh = int(u[16])
+					HardCrossReactFilter = str(u[17])
+					MaxSets = int(u[18])
+					Threads = int(u[19])
+					BackgroundSearchSensitivity = str(u[20])
+					Evalue=int(u[21])
 
 
-# Create Blastn Database if neccessary
-if AllParameter.BackgroundCheck.upper() != 'NO':
+			except:
+				print('Parameters File Could Not Be Opened\nCheck File Path.')
+				sys.exit()
 
-	AllParameter.BlastnDBName =  '{}_Blastn_DB_PrimedRPA'.format(AllParameter.BackgroundCheck.split('/')[-1].split('.')[0])
-	if os.path.exists(AllParameter.BlastnDBName) == False:
-		os.makedirs(AllParameter.BlastnDBName)
-		makeblastdbcommand = '{0} -in {1} -dbtype nucl -parse_seqids -out {2}/{2}'.format(AllParameter.BlastnDBCreationPath,
-																						  AllParameter.BackgroundCheck,
-																						  AllParameter.BlastnDBName)
+		else:
 
-		print('\nCreating Blastn Database:')
-		subprocess.call([makeblastdbcommand],shell=True)
-		print('\n')
+			parser = argparse.ArgumentParser()
+			parser.add_argument('--RunID', help='Desired Run ID', required=True)
+			parser.add_argument('--PriorAlign', help='Optional: Path to Prior Binding File',default='NO')
+			parser.add_argument('--PriorBindingSite', help='Optional: Path to Prior Binding File',default='NO')
+			parser.add_argument('--InputFile', help='Path to Input File',default='NO')
+			parser.add_argument('--InputFileType', help='Options [SS,MS,MAS]')
+			parser.add_argument('--IdentityThreshold', help='Desired Identity Threshold',default=0.99)
+			parser.add_argument('--ConservedAnchor', help='Identity Anchor Required',type=str,default='NO')
+			parser.add_argument('--PrimerLength', help='Desired Primer Length',type=str,default='30')
+			parser.add_argument('--ProbeRequired', help='Options [NO,EXO,NFO]',type=str,default='NO')
+			parser.add_argument('--ProbeLength', help='Desired Probe Length',type=str,default='50')
+			parser.add_argument('--AmpliconSizeLimit', help='Amplicon Size Limit',type=int,default=500)
+			parser.add_argument('--NucleotideRepeatLimit', help='Nucleotide Repeat Limit (i.e 5 = AAAAA)',type=int,default=5)
+			parser.add_argument('--MinGC', help='Minimum GC Content',type=int,default=30)
+			parser.add_argument('--MaxGC', help='Maximum GC Content',type=int,default=70)
+			parser.add_argument('--DimerisationThresh', help='Percentage Dimerisation Tolerated',type=int,default=40)
+			parser.add_argument('--BackgroundCheck', help='Options [NO, Path To Background Fasta File]',default='NO')
+			parser.add_argument('--CrossReactivityThresh', help='Max Cross Reactivity Threshold',type=int,default=60)
+			parser.add_argument('--HardCrossReactFilter', help='Hard Cross Reactivity Filter',type=str,default='NO')
+			parser.add_argument('--MaxSets', help='Default Set To 100',type=int,default=100)
+			parser.add_argument('--Threads', help='Default Set To 1',type=int,default=1)
+			parser.add_argument('--BackgroundSearchSensitivity', help='Options [Basic or Advanced or Fast]',type=str,default='Basic')
+			parser.add_argument('--Evalue', help='Default Set To 1000',type=int,default=1000)
 
-	# Create directory to house blastn outputs
-	AllParameter.PrimerBlastnOutput = '{}/{}'.format(AllParameter.BlastnDBName,AllParameter.RunID)
-	if os.path.exists(AllParameter.PrimerBlastnOutput) == False:
-		os.mkdir(AllParameter.PrimerBlastnOutput)
+			AllParameter = parser.parse_args()
 
 
-# Check If Alignment Is Necessary
-if (AllParameter.InputFileType == 'MS' and AllParameter.InputFile != 'NO') :
+	except:
+		print('Please run PrimedRPA --help to see valid options')
+		sys.exit()
 
-	# Check if MS Alignment already Exists in Working Directory
-	if AllParameter.InputFile.replace('.fasta','_Aligned.fasta') not in glob.glob(AllParameter.InputFile.replace('.fasta','_Aligned.fasta')):
-		RunningClustalo1(AllParameter.ClustalOPath,[AllParameter.InputFile], overwriteOutput=False)
 
-	AllParameter.InputFile = AllParameter.InputFile.replace('.fasta','_Aligned.fasta')
+	# Check Files Defined Exist
+	FileLocationsCheckList = [AllParameter.PriorAlign,
+							AllParameter.PriorBindingSite,
+							AllParameter.BackgroundCheck,
+							AllParameter.InputFile]
+
+	for FL in FileLocationsCheckList:
+		if (FL != 'NO' and FL != ''):
+			if FL not in glob.glob(FL):
+				print('File Not Found: {}'.format(FL))
+				sys.exit()
+
+
+
+	#Define tool dependancy paths
+	AllParameter.BlastnPath = 'blastn'
+	AllParameter.BlastnDBCreationPath = 'makeblastdb'
+	AllParameter.ClustalOPath = 'clustalo'
+	AllParameter.SamtoolsPath = 'samtools'
+
+
+	# Create Blastn Database if neccessary
+	if AllParameter.BackgroundCheck.upper() != 'NO':
+
+		AllParameter.BlastnDBName =  '{}_Blastn_DB_PrimedRPA'.format(AllParameter.BackgroundCheck.split('/')[-1].split('.')[0])
+		if os.path.exists(AllParameter.BlastnDBName) == False:
+			os.makedirs(AllParameter.BlastnDBName)
+			makeblastdbcommand = '{0} -in {1} -dbtype nucl -parse_seqids -out {2}/{2}'.format(AllParameter.BlastnDBCreationPath,
+																							AllParameter.BackgroundCheck,
+																							AllParameter.BlastnDBName)
+
+			print('\nCreating Blastn Database:')
+			subprocess.call([makeblastdbcommand],shell=True)
+			print('\n')
+
+		# Create directory to house blastn outputs
+		AllParameter.PrimerBlastnOutput = '{}/{}'.format(AllParameter.BlastnDBName,AllParameter.RunID)
+		if os.path.exists(AllParameter.PrimerBlastnOutput) == False:
+			os.mkdir(AllParameter.PrimerBlastnOutput)
+
+
+	# Check If Alignment Is Necessary
+	if (AllParameter.InputFileType == 'MS' and AllParameter.InputFile != 'NO') :
+
+		# Check if MS Alignment already Exists in Working Directory
+		if AllParameter.InputFile.replace('.fasta','_Aligned.fasta') not in glob.glob(AllParameter.InputFile.replace('.fasta','_Aligned.fasta')):
+			RunningClustalo1(AllParameter.ClustalOPath,[AllParameter.InputFile], overwriteOutput=False)
+
+		AllParameter.InputFile = AllParameter.InputFile.replace('.fasta','_Aligned.fasta')
+
+	CheckingAlignedOutputFile(AllParameter)
 
 
 # Run Primer, Probe Design process
 if __name__ == '__main__':
-	CheckingAlignedOutputFile(AllParameter)
+	main()
